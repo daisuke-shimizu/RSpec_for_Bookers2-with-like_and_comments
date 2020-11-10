@@ -109,7 +109,37 @@ describe '投稿のテスト' do
   			expect(page).to have_content book.body
   			expect(page).to have_content book2.body
   		end
+  		it 'いいねのハートが表示される' do
+  			expect(page).to have_link '', href: book_favorites_path(book)
+  			expect(page).to have_link '', href: book_favorites_path(book2)
+  		end
+  		it 'いいねのハートが表示される' do
+  			expect(page).to have_link '', href: book_favorites_path(book)
+  			expect(page).to have_link '', href: book_favorites_path(book2)
+  		end
+  		it 'コメント数が表示される' do
+  			expect(page).to have_content book.book_comments.count
+  			expect(page).to have_content book2.book_comments.count
+  		end
   	end
+  	context 'いいね機能のテスト' do
+			it 'いいね登録' do
+				click_link '0', href: book_favorites_path(book)
+				expect(page).to have_link '1', href: book_favorites_path(book)
+				# いいね数が初期が0で、押すと1になることを利用したテスト（不安）
+				# , href: book_favorites_path(book)
+				# expect(current_path).to eq '/books/' + book.id.to_s
+				# expect(current_path).to eq('/books/' + book.id.to_s + '/edit')
+			end
+			it 'いいね解除' do
+				click_link '0', href: book_favorites_path(book)
+				click_link '0', href: book_favorites_path(book2)
+				click_link '1', href: book_favorites_path(book)
+				click_link '1', href: book_favorites_path(book2)
+				expect(page).to have_link '0', href: book_favorites_path(book)
+				expect(page).to have_no_link '1', href: book_favorites_path(book)
+			end
+		end
   end
 
   describe '詳細画面のテスト' do
