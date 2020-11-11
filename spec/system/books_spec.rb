@@ -123,7 +123,7 @@ describe '投稿のテスト' do
   		end
   	end
   	context 'いいね機能のテスト' do
-			it 'いいね登録' do
+			it 'いいね登録ができる' do
 				click_link '0', href: book_favorites_path(book)
 				expect(page).to have_link '1', href: book_favorites_path(book)
 				# いいね数が初期が0で、押すと1になることを利用したテスト（不安）
@@ -131,7 +131,7 @@ describe '投稿のテスト' do
 				# expect(current_path).to eq '/books/' + book.id.to_s
 				# expect(current_path).to eq('/books/' + book.id.to_s + '/edit')
 			end
-			it 'いいね解除' do
+			it 'いいね解除ができる' do
 				click_link '0', href: book_favorites_path(book)
 				click_link '0', href: book_favorites_path(book2)
 				click_link '1', href: book_favorites_path(book)
@@ -160,6 +160,38 @@ describe '投稿のテスト' do
   			visit book_path(book)
   			expect(page).to have_content book.body
   		end
+  		it 'いいね数が表示される' do
+
+  			visit book_path(book)
+  			expect(page).to have_link book.favorites.count
+  		end
+  		it 'コメント数が表示される' do
+  			visit book_path(book)
+  			expect(page).to have_content book.book_comments.count
+  		end
+  		it 'いいね登録ができる' do
+			visit book_path(book)
+			click_link '0', href: book_favorites_path(book)
+			expect(page).to have_link '1', href: book_favorites_path(book)
+		end
+		it 'いいね解除ができる' do
+			visit book_path(book)
+			click_link '0', href: book_favorites_path(book)
+			click_link '1', href: book_favorites_path(book)
+			expect(page).to have_link '0', href: book_favorites_path(book)
+			expect(page).to have_no_link '1', href: book_favorites_path(book)
+		end
+		# it 'コメント投稿に成功する' do
+		#   	fill_in 'book[title]', with: Faker::Lorem.characters(number:5)
+		#   	fill_in 'book[body]', with: Faker::Lorem.characters(number:20)
+		#   	click_button 'Create Book'
+		#   	expect(page).to have_content 'successfully'
+		# end
+		#   it 'コメント投稿に失敗する' do
+		#   	click_button 'Create Book'
+		#   	expect(page).to have_content 'error'
+		#   	expect(current_path).to eq('/books')
+		#   end
   	end
   	context '自分の投稿詳細画面の表示を確認' do
   		it '投稿の編集リンクが表示される' do
