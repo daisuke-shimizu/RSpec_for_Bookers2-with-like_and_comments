@@ -181,17 +181,29 @@ describe '投稿のテスト' do
 			expect(page).to have_link '0', href: book_favorites_path(book)
 			expect(page).to have_no_link '1', href: book_favorites_path(book)
 		end
-		# it 'コメント投稿に成功する' do
-		#   	fill_in 'book[title]', with: Faker::Lorem.characters(number:5)
-		#   	fill_in 'book[body]', with: Faker::Lorem.characters(number:20)
-		#   	click_button 'Create Book'
-		#   	expect(page).to have_content 'successfully'
+		it 'コメント投稿に成功する' do
+			visit book_path(book)
+		  	fill_in 'book_comment[comment]', with: Faker::Lorem.characters(number:30)
+		  	click_button 'Create Book comment'
+		  	expect(page).to have_content book.book_comments.find(1).comment
+		  	expect(page).to have_link 'Destroy', href: book_path(book)
+			expect(current_path).to eq '/books/' + book.id.to_s
+		end
+		# it '他ユーザーのコメントは削除ボタンが表示されない' do
+		# 	visit book_path(book2)
+		#   	fill_in 'book_comment[comment]', with: Faker::Lorem.characters(number:30)
+		#   	click_button 'Create Book comment'
+		#   	expect(page).to have_content book.book_comments.find(1).comment
+		# 	expect(current_path).to eq '/books/' + book.id.to_s
 		# end
-		#   it 'コメント投稿に失敗する' do
-		#   	click_button 'Create Book'
-		#   	expect(page).to have_content 'error'
-		#   	expect(current_path).to eq('/books')
-		#   end
+		it 'コメント投稿に失敗する' do
+
+			visit book_path(book)
+		  	click_button 'Create Book comment'
+		  	binding.pry
+		  	expect(page).to have_no_content book.book_comments.find(1).comment
+		  	expect(current_path).to eq('/books')
+		end
   	end
   	context '自分の投稿詳細画面の表示を確認' do
   		it '投稿の編集リンクが表示される' do
