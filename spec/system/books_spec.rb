@@ -5,6 +5,7 @@ describe '投稿のテスト' do
   let!(:user2) { create(:user) }
   let!(:book) { create(:book, user: user) }
   let!(:book2) { create(:book, user: user2) }
+  let!(:book2_comment) { create(:book_comment, user: user2, book: book2) }
   before do
   	visit new_user_session_path
   	fill_in 'user[name]', with: user.name
@@ -185,24 +186,24 @@ describe '投稿のテスト' do
 			visit book_path(book)
 		  	fill_in 'book_comment[comment]', with: Faker::Lorem.characters(number:30)
 		  	click_button 'Create Book comment'
-		  	expect(page).to have_content book.book_comments.find(1).comment
+		  	expect(page).to have_content book.book_comments.find(2).comment
 		  	expect(page).to have_link 'Destroy', href: book_path(book)
 			expect(current_path).to eq '/books/' + book.id.to_s
 		end
-		# it '他ユーザーのコメントは削除ボタンが表示されない' do
-		# 	visit book_path(book2)
-		#   	fill_in 'book_comment[comment]', with: Faker::Lorem.characters(number:30)
-		#   	click_button 'Create Book comment'
-		#   	expect(page).to have_content book.book_comments.find(1).comment
-		# 	expect(current_path).to eq '/books/' + book.id.to_s
-		# end
+
+		it '他ユーザーのコメントは削除ボタンが表示されない' do
+			visit book_path(book2)
+		  	expect(page).to have_content book2.book_comments.find(1).comment
+		  	expect(page).to have_no_link 'Destroy', href: book_path(book2)
+			expect(current_path).to eq '/books/' + book2.id.to_s
+		end
+
 		it 'コメント投稿に失敗する' do
 
 			visit book_path(book)
 		  	click_button 'Create Book comment'
-		  	binding.pry
-		  	expect(page).to have_no_content book.book_comments.find(1).comment
-		  	expect(current_path).to eq('/books')
+		  	expect(page).to have_no_content book.book_comments.all
+		  	expect(current_path).to eq '/books/' + book.id.to_s
 		end
   	end
   	context '自分の投稿詳細画面の表示を確認' do
