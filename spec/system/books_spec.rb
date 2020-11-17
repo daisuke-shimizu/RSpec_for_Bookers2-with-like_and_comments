@@ -162,9 +162,8 @@ describe '投稿のテスト' do
   			expect(page).to have_content book.body
   		end
   		it 'いいね数が表示される' do
-
   			visit book_path(book)
-  			expect(page).to have_link book.favorites.count
+  			expect(page).to have_content book.favorites.count
   		end
   		it 'コメント数が表示される' do
   			visit book_path(book)
